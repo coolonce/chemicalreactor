@@ -16,18 +16,15 @@ namespace golceva1
 
         public List<Dictionary<double, double>> Get()
         {
-            //double cn = 0;
             List<Dictionary<double, double>> cnn = new List<Dictionary<double, double>>();
             double tay = CalcTay();
             double time = CalcTime();
             for (int i = 1; i < param.N+1; i++)
             {
                 cnn.Add(Calc(i));
-                //cn += (1 / Fuct(i - 1)) * Math.Pow((CalcTime() / CalcTay()), i - 1);
-                //cnn.Add(cn * (Math.Pow(Math.E, (CalcTime() / CalcTay())) * param.cabx));
             }
             return cnn;
-            //return  cn * (Math.Pow(Math.E, (CalcTime() / CalcTay())) * param.cabx);
+
             /*
              * смотрим сколько реакторов. 
              * вызываем кальк в него передаем номер ячейки
@@ -38,8 +35,9 @@ namespace golceva1
         public Dictionary<double, double> Calc(int numberCell)
         {
             Dictionary<double, double> result = new Dictionary<double, double>();
-            double maxTime = Math.Round(400+ CalcTime() * 60);
-            double tay = CalcTay()*60;
+            double maxTime = Math.Round(CalcTime() * 60);
+            double tay = CalcTay();
+
             for (int t = 0; t < maxTime; t++)
             {
                 double cn = 0;
@@ -52,6 +50,7 @@ namespace golceva1
                 cn = param.cabx - (tmp * Math.Pow(Math.E, Convert.ToDouble(-t / tay)) * param.cabx);
                 result[t] = Math.Round(cn,5);
             }
+
             for (double t = maxTime; t < maxTime + maxTime; t++)
             {
                 double cn = 0;
@@ -63,19 +62,22 @@ namespace golceva1
                 }
                 var cc = result[maxTime - 1];
                 cn = (tmp * Math.Pow(Math.E, Convert.ToDouble(-(t - maxTime)) / tay)) * cc;
-                //cn = cn > cc ? 1 : cn;
                 result[t] = Math.Round(cn,5);
             }
+
             return result;
         }
 
-
-
-        private double CalcTay()
+        public void Calc2()
         {
-            return param.V/param.G;
+
         }
-        private double CalcTime()
+
+        public double CalcTay()
+        {
+            return (param.V / param.G) * 60;
+        }
+        public double CalcTime()
         {
             return param.M * CalcTay();
         }

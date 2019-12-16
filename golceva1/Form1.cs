@@ -20,6 +20,7 @@ namespace golceva1
             InitializeComponent();
         }
         List<Dictionary<double, double>> results;
+        List<List<Dictionary<int, double>>> arrrca;
         private void countCell_Scroll(object sender, EventArgs e)
         {
 
@@ -31,13 +32,27 @@ namespace golceva1
             param.N = countCell.Value;
             param.cabx = inputComp.Value;
             param.K = speedReact.Value*60;
-            param.ca = ca.Value;
-            param.cb = cb.Value;
-            param.cc = cc.Value;
+            param.ca10 = ca10.Value;
+            param.cb10 = cb10.Value;
+            param.cc10 = cc10.Value;
+            param.ca20 = ca20.Value;
+            param.cb20 = cb20.Value;
+            param.cc20 = cc20.Value;
+
+            param.cabx2 = Convert.ToDouble(cabx.Value);
+            param.cbbx = Convert.ToDouble(cbbx.Value);
+            param.h = Convert.ToDouble(h.Text);
+
             param.V = V.Value ;
             param.G = G.Value ;
             param.M = Convert.ToDouble(M.Text);
 
+            param.V2 = Convert.ToDouble(V2.Text);
+            param.G2 = Convert.ToDouble(G2.Text);
+            param.K2 = Convert.ToDouble(K2.Text);
+            arrrca = new List<List<Dictionary<int, double>>>();
+
+            arrrca =  (new Euler(param)).Calc();
             results = (new Calculate(param)).Get();
             //double cn = (new Calculate(param)).Get();
             //MessageBox.Show("Концентрация:" + cn.ToString()+ " Кмоль /м3");
@@ -47,6 +62,77 @@ namespace golceva1
         
         private void CreateGraphs()
         {
+            chart2.Titles.Clear();
+            chart2.Series.Clear();
+            chart2.Titles.Add("График изменения концентрации");
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = chart2.Series.Add("Ca1");
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = chart2.Series.Add("Cb1");
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = chart2.Series.Add("Cc1");
+
+            series1.ChartType = SeriesChartType.Line;
+            series2.ChartType = SeriesChartType.Line;
+            series3.ChartType = SeriesChartType.Line;
+            //List<List<Dictionary<int, double>>>
+
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add(new DataColumn("минута", typeof(Int32)));
+            dt1.Columns.Add(new DataColumn("Ca1", typeof(double)));
+            dt1.Columns.Add(new DataColumn("Cb1", typeof(double)));
+            dt1.Columns.Add(new DataColumn("Cc1", typeof(double)));
+
+            Dictionary<int, double> react1 = arrrca[0][0];
+            var r = 1;
+            foreach (var result in arrrca[0])
+            {
+                foreach (var k in result)
+                {
+                    if (r == 1)
+                    {
+
+                        series1.Points.AddXY(k.Key, k.Value);
+                        dt1.Rows.Add();
+                        dt1.Rows[k.Key]["минута"] = k.Key;
+                        dt1.Rows[k.Key]["Ca1"] = k.Value;
+                    }
+                    if (r == 2)
+                    {
+                        series2.Points.AddXY(k.Key, k.Value);
+                        dt1.Rows.Add();
+                        //dt1.Rows[k.Key]["минута"] = k.Key;
+                        dt1.Rows[k.Key]["Cb1"] = k.Value;
+                    }
+                    if (r == 3)
+                    {
+                        series3.Points.AddXY(k.Key, k.Value);
+                        dt1.Rows.Add();
+                        //dt1.Rows[k.Key]["минута"] = k.Key;
+                        dt1.Rows[k.Key]["Cc1"] = k.Value;
+                    }
+                }
+                r++;
+            }
+            dataGridView2.DataSource = dt1;
+
+            chart2.ChartAreas[0].AxisX.IsStartedFromZero = true;
+            //chart2.ChartAreas[0].AxisX.Interval = (results[0].Count / 5);
+            //chart1.ChartAreas[0].AxisY.Interval = 0.1;
+            chart2.ChartAreas[0].AxisY.IsStartedFromZero = true;
+            chart2.ChartAreas[0].AxisX.Minimum = 0;
+            //chart2.ChartAreas[0].AxisY.Minimum = 0;
+            chart2.ChartAreas[0].AxisX.Title = "Время, мин";
+            chart2.ChartAreas[0].AxisY.Title = "Концентрация, Кмоль/м^3";
+            
+
+
+
+
+
+
+
+
+
+
             Dictionary<int, string> colors = new Dictionary<int, string>() {
                 {1, "White"},
                 {2, "White"},
@@ -85,8 +171,17 @@ namespace golceva1
             chart1.ChartAreas[0].AxisY.Minimum = 0;
             chart1.ChartAreas[0].AxisX.Title = "Время, мин";
             chart1.ChartAreas[0].AxisY.Title = "Концентрация, Кмоль/м^3";
-            maxTime.Text = (results[0].Count /60).ToString();
+
+
+
+
+
+
         }
-        
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
