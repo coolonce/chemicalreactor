@@ -56,8 +56,8 @@ namespace golceva1
             for (int i = 1; i < maxTime; i++)
             {
                 CA1[i] = Math.Round(CA1[i - 1] + param.h * (((param.cabx2 - CA1[i - 1])/ tay) - (param.K2 * CA1[i - 1] * param.cb10)) ,3);
-                CB1[i] = Math.Round(CB1[i - 1] + param.h * (((param.cbbx - CB1[i - 1]) / tay) - (param.K2 * CA1[i - 1] * CB1[i - 1])), 3);
-                CC1[i] = Math.Round(CC1[i - 1] + param.h * (((0 - CC1[i - 1]) / tay) + (2 * param.K2 * CA1[i - 1]* CB1[i - 1])), 3);
+                CB1[i] = Math.Round(CB1[i - 1] + param.h * (((param.cbbx - CB1[i - 1]) / tay) - (param.K2 * CA1[i - 1] * param.cb10)), 3);
+                CC1[i] = Math.Round(CC1[i - 1] + param.h * (((0 - CC1[i - 1]) / tay) + (2 * param.K2 * CA1[i - 1] * param.cb10)), 3);
             }
 
             List<Dictionary<int, double>> react1 = new List<Dictionary<int, double>>();

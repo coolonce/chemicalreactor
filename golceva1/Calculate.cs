@@ -47,7 +47,7 @@ namespace golceva1
                     var two = Math.Pow(Convert.ToDouble(t) / tay, Convert.ToDouble(i - 1));
                     tmp += two / Fuct(i - 1);
                 }
-                cn = param.cabx - (tmp * Math.Pow(Math.E, Convert.ToDouble(-t / tay)) * param.cabx);
+                cn = (tmp * Math.Pow(Math.E, Convert.ToDouble(-t / tay)) * param.cabx);
                 result[t] = Math.Round(cn,5);
             }
 
@@ -61,7 +61,7 @@ namespace golceva1
                     tmp +=  two/ Fuct(i - 1);
                 }
                 var cc = result[maxTime - 1];
-                cn = (tmp * Math.Pow(Math.E, Convert.ToDouble(-(t - maxTime)) / tay)) * cc;
+                cn = param.cabx - (tmp * Math.Pow(Math.E, Convert.ToDouble(-(t - maxTime)) / tay)) * param.cabx;
                 result[t] = Math.Round(cn,5);
             }
 

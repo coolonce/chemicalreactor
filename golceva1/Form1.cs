@@ -45,7 +45,7 @@ namespace golceva1
 
             param.V = V.Value ;
             param.G = G.Value ;
-            param.M = Convert.ToDouble(M.Text);
+            param.M = Convert.ToDouble(M.Text) / 10;
 
             param.V2 = Convert.ToDouble(V2.Text);
             param.G2 = Convert.ToDouble(G2.Text);
@@ -70,8 +70,11 @@ namespace golceva1
             System.Windows.Forms.DataVisualization.Charting.Series series3 = chart2.Series.Add("Cc1");
 
             series1.ChartType = SeriesChartType.Line;
+            series1.BorderWidth = 2;
             series2.ChartType = SeriesChartType.Line;
+            series2.BorderWidth = 2;
             series3.ChartType = SeriesChartType.Line;
+            series3.BorderWidth = 2;
             //List<List<Dictionary<int, double>>>
 
 
