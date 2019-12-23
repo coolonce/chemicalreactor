@@ -20,7 +20,8 @@ namespace golceva1
             InitializeComponent();
         }
         List<Dictionary<double, double>> results;
-        List<List<Dictionary<int, double>>> arrrca;
+        List<List<Dictionary<double, double>>> arrrca;
+        private InputParametrs param;
         private void countCell_Scroll(object sender, EventArgs e)
         {
 
@@ -28,7 +29,7 @@ namespace golceva1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            InputParametrs param = new InputParametrs();
+            param = new InputParametrs();
             param.N = countCell.Value;
             param.cabx = inputComp.Value;
             param.K = speedReact.Value*60;
@@ -50,7 +51,7 @@ namespace golceva1
             param.V2 = Convert.ToDouble(V2.Text);
             param.G2 = Convert.ToDouble(G2.Text);
             param.K2 = Convert.ToDouble(K2.Text);
-            arrrca = new List<List<Dictionary<int, double>>>();
+            arrrca = new List<List<Dictionary<double, double>>>();
 
             arrrca =  (new Euler(param)).Calc();
             results = (new Calculate(param)).Get();
@@ -69,63 +70,129 @@ namespace golceva1
             System.Windows.Forms.DataVisualization.Charting.Series series2 = chart2.Series.Add("Cb1");
             System.Windows.Forms.DataVisualization.Charting.Series series3 = chart2.Series.Add("Cc1");
 
+            chart3.Titles.Clear();
+            chart3.Series.Clear();
+            chart3.Titles.Add("График изменения концентрации");
+
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = chart3.Series.Add("Ca2");
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = chart3.Series.Add("Cb2");
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = chart3.Series.Add("Cc2");
+
             series1.ChartType = SeriesChartType.Line;
             series1.BorderWidth = 2;
             series2.ChartType = SeriesChartType.Line;
             series2.BorderWidth = 2;
             series3.ChartType = SeriesChartType.Line;
             series3.BorderWidth = 2;
+
+            series4.ChartType = SeriesChartType.Line;
+            series4.BorderWidth = 2;
+            series5.ChartType = SeriesChartType.Line;
+            series5.BorderWidth = 2;
+            series6.ChartType = SeriesChartType.Line;
+            series6.BorderWidth = 2;
             //List<List<Dictionary<int, double>>>
 
 
             DataTable dt1 = new DataTable();
-            dt1.Columns.Add(new DataColumn("минута", typeof(Int32)));
+            dt1.Columns.Add(new DataColumn("Шаг", typeof(double)));
             dt1.Columns.Add(new DataColumn("Ca1", typeof(double)));
             dt1.Columns.Add(new DataColumn("Cb1", typeof(double)));
             dt1.Columns.Add(new DataColumn("Cc1", typeof(double)));
+            dt1.Columns.Add(new DataColumn("Ca2", typeof(double)));
+            dt1.Columns.Add(new DataColumn("Cb2", typeof(double)));
+            dt1.Columns.Add(new DataColumn("Cc2", typeof(double)));
 
-            Dictionary<int, double> react1 = arrrca[0][0];
-            var r = 1;
+
+
+
+
+            Dictionary<double, double> react1 = arrrca[0][0];
+            var numberReaction = 1;
             foreach (var result in arrrca[0])
             {
+                int i = 0;
                 foreach (var k in result)
                 {
-                    if (r == 1)
+                    if (numberReaction == 1)
                     {
 
                         series1.Points.AddXY(k.Key, k.Value);
                         dt1.Rows.Add();
-                        dt1.Rows[k.Key]["минута"] = k.Key;
-                        dt1.Rows[k.Key]["Ca1"] = k.Value;
+                        dt1.Rows[i]["Шаг"] = k.Key;
+                        dt1.Rows[i]["Ca1"] = k.Value;
                     }
-                    if (r == 2)
+                    if (numberReaction == 2)
                     {
                         series2.Points.AddXY(k.Key, k.Value);
                         dt1.Rows.Add();
-                        //dt1.Rows[k.Key]["минута"] = k.Key;
-                        dt1.Rows[k.Key]["Cb1"] = k.Value;
+                        //dt1.Rows[i]["минута"] = k.Key;
+                        dt1.Rows[i]["Cb1"] = k.Value;
                     }
-                    if (r == 3)
+                    if (numberReaction == 3)
                     {
                         series3.Points.AddXY(k.Key, k.Value);
                         dt1.Rows.Add();
                         //dt1.Rows[k.Key]["минута"] = k.Key;
-                        dt1.Rows[k.Key]["Cc1"] = k.Value;
+                        dt1.Rows[i]["Cc1"] = k.Value;
                     }
+                    i++;
                 }
-                r++;
+                numberReaction++;
             }
+            //Вывод С2
+            numberReaction = 1;
+            foreach (var result in arrrca[1])
+            {
+                int i = 0;
+                foreach (var k in result)
+                {
+                    if (numberReaction == 1)
+                    {
+
+                        series4.Points.AddXY(k.Key, k.Value);
+                        dt1.Rows.Add();                        
+                        dt1.Rows[i]["Ca2"] = k.Value;
+                    }
+                    if (numberReaction == 2)
+                    {
+                        series5.Points.AddXY(k.Key, k.Value);
+                        dt1.Rows.Add();
+                        dt1.Rows[i]["Cb2"] = k.Value;
+                    }
+                    if (numberReaction == 3)
+                    {
+                        series6.Points.AddXY(k.Key, k.Value);
+                        dt1.Rows.Add();
+                        dt1.Rows[i]["Cc2"] = k.Value;
+                    }
+                    i++;
+                }
+                numberReaction++;
+            }
+
+
             dataGridView2.DataSource = dt1;
 
             chart2.ChartAreas[0].AxisX.IsStartedFromZero = true;
-            //chart2.ChartAreas[0].AxisX.Interval = (results[0].Count / 5);
+            chart2.ChartAreas[0].AxisX.Interval = param.h < 0.1? param.h*10: param.h;
             //chart1.ChartAreas[0].AxisY.Interval = 0.1;
             chart2.ChartAreas[0].AxisY.IsStartedFromZero = true;
             chart2.ChartAreas[0].AxisX.Minimum = 0;
             //chart2.ChartAreas[0].AxisY.Minimum = 0;
-            chart2.ChartAreas[0].AxisX.Title = "Время, мин";
+            chart2.ChartAreas[0].AxisX.Title = "Время, час";
             chart2.ChartAreas[0].AxisY.Title = "Концентрация, Кмоль/м^3";
-            
+
+
+            chart3.ChartAreas[0].AxisX.IsStartedFromZero = true;
+            chart3.ChartAreas[0].AxisX.Interval = param.h < 0.1 ? param.h * 10 : param.h;
+            //chart1.ChartAreas[0].AxisY.Interval = 0.1;
+            chart3.ChartAreas[0].AxisY.IsStartedFromZero = true;
+            chart3.ChartAreas[0].AxisX.Minimum = 0;
+            //chart2.ChartAreas[0].AxisY.Minimum = 0;
+            chart3.ChartAreas[0].AxisX.Title = "Время, час";
+            chart3.ChartAreas[0].AxisY.Title = "Концентрация, Кмоль/м^3";
+
 
 
 
